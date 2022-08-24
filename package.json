@@ -1,0 +1,25 @@
+{
+  "name": "auto-grid",
+  "version": "1.0.0",
+  "description": "CSS Grid auto",
+  "main": "index.css",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/melvindesign/auto-grid.git"
+  },
+  "keywords": [
+    "grid",
+    "auto-grid",
+    "css",
+    "col"
+  ],
+  "author": "@melv.indesign",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/melvindesign/auto-grid/issues"
+  },
+  "homepage": "https://github.com/melvindesign/auto-grid#readme"
+}

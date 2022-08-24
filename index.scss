@@ -1,0 +1,161 @@
+@use "sass:map";
+
+/* CONFIGURATIONS */
+:root {
+	// DEFAULT
+	--columns: 12;
+	--column-gap: 24px;
+	--row-gap: 24px;
+	--padding-left: 64px;
+	--padding-right: 64px;
+	--max-width: none;
+
+	// BREAKPOINTS
+	--bp-default: 0px;
+	--bp-mobile: 480px;
+	--bp-tablet: 1200px;
+	--bp-laptop: 1440px;
+
+	// MOBILE
+	@media only screen and (min-width: var(--bp-default)) and (max-width: var(--bp-mobile)) {
+		--columns: 4;
+		--column-gap: 16px;
+		--row-gap: 16px;
+		--padding-left: 16pt;
+		--padding-right: 16pt;
+		--max-width: none;
+	}
+
+	// TABLET
+	@media only screen and (min-width: var(--bp-mobile)) and (max-width: var(--bp-tablet)) {
+		--columns: 8;
+		--column-gap: 24px;
+		--row-gap: 32px;
+		--padding-left: 64px;
+		--padding-right: 64px;
+		--max-width: none;
+	}
+
+	// LAPTOP
+	@media only screen and (min-width: var(--bp-tablet)) and (max-width: var(--bp-laptop)) {
+		--columns: 12;
+		--column-gap: 24px;
+		--row-gap:40px;
+		--padding-left: 64px;
+		--padding-right: 64px;
+		--max-width: none;
+	}
+
+	// DESKTOP
+	@media only screen and (min-width: calc(var(--bp-laptop) + 1px)) {
+		--columns: 16;
+		--column-gap: 24px;
+		--row-gap:40px;
+		--padding-left: 64px;
+		--padding-right: 64px;
+		--max-width: none;
+	}
+}
+
+grid, auto-grid {
+	display: grid;
+	overflow: auto;
+	height: 100vh;
+	grid-auto-rows: min-content;
+	-ms-grid-rows: min-content;
+	--grid-column-start: 1; /* column start */
+	--grid-column-end: -1; /* column end */
+
+	transition: padding-left 0.5s linear, padding-right 0.5s linear;
+	-moz-transition: padding-left 0.5s linear, padding-right 0.5s linear;
+	-webkit-transition: padding-left 0.5s linear, padding-right 0.5s linear;
+
+	& > * {
+	  display: block;
+	  appearance: none;
+	  -webkit-appearance: none;
+	}
+
+	column-gap: var(--column-gap);
+	row-gap: var(--row-gap);
+	padding-left: var(--padding-left);
+	padding-right: var(--padding-right);
+
+	grid-template-columns: repeat(var(--columns), 1fr);
+	-ms-grid-columns: repeat(var(--columns), 1fr);
+
+	@include connectedVar("");
+	@include connectedVar("-sm");
+	@include connectedVar("-md");
+	@include connectedVar("-lg");
+	@include connectedVar("-xl");
+
+
+	@include generateCol(var(--columns), $default-suffix);
+}
+
+  @mixin connectedVar($name) {
+	& > *[col#{$name}] {
+	  grid-column-end: span var(--grid-column-end);
+	}
+
+	& > *[col#{$name}*="+"],
+	& > *[col#{$name}*="-"],
+	& > *[col#{$name}*=".."] {
+	  grid-column-start: var(--grid-column-start);
+	}
+
+	& > *[col#{$name}*="-"],
+	& > *[col#{$name}*=".."] {
+	  grid-column-end: var(--grid-column-end);
+	}
+
+	& > *[col#{$name}="max"], & > *:not([col#{$name}], [col]) {
+	  grid-column: 1 / -1;
+	}
+  }
+
+  @mixin generateCol($columns, $suffix) {
+	@for $col from 1 through $columns {
+	  & > *[col#{$suffix}^="#{$col}"] {
+		--grid-column-start: #{$col};
+	  }
+
+	  @if $col == 1 {
+		& > *[col#{$suffix}$="+#{$col}"],
+		& > *[col#{$suffix}="#{$col}"] {
+		  --grid-column-end: #{$col};
+		}
+	  } @else {
+		@if $col == $columns {
+		  & > *[col#{$suffix}$="-#{$col}"] {
+			--grid-column-end: #{$col + 1};
+		  }
+		} @else {
+		  & > *[col#{$suffix}$="+#{$col}"],
+		  & > *[col#{$suffix}$="-#{$col - 1}"],
+		  & > *[col#{$suffix}="#{$col}"] {
+			--grid-column-end: #{$col};
+		  }
+		}
+	  }
+	}
+	@for $i from 2 through 4 {
+	  & > *[col#{$suffix}="1/#{$i}"] {
+		--grid-column-end: #{calc(var(--columns) / $i)};
+		--grid-column-start: 1;
+	  }
+	}
+
+	@for $i from 3 through 4 {
+	  & > *[col#{$suffix}="2/#{$i}"] {
+		--grid-column-end: #{calc((var(--columns) * 2) / $i)};
+		--grid-column-start: 1;
+	  }
+	}
+
+	& > *[col#{$suffix}="3/4"] {
+	  --grid-column-end: #{calc((var(--columns) * 3) / 4)};
+	  --grid-column-start: 1;
+	}
+  }
